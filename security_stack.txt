@@ -1,0 +1,1 @@
+AES256 + TLS1.3 + JWT rotativos + Anti-root/emulador
