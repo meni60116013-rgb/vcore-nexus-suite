@@ -1,0 +1,43 @@
+name: VCORE Nexus Suite CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 1. Despliegue PWA en GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload PWA artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: vcore_nexus_suite/pwa
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
+      # 2. Despliegue Control Plane en Node.js (ejemplo con Heroku)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Deploy Control Plane
+        run: |
+          cd vcore_control_plane
+          npm install
+          echo "🚀 Desplegando Control Plane en servidor Node.js..."
+          # Aquí puedes integrar con tu proveedor (Heroku, Render, etc.)
+          # Ejemplo Heroku:
+          # git remote add heroku https://git.heroku.com/tu-app.git
+          # git push heroku main
