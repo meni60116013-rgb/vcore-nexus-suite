@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vcore-nexus
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vcore-nexus
+  template:
+    metadata:
+      labels:
+        app: vcore-nexus
+    spec:
+      containers:
+      - name: nexus-core
+        image: vcore-nexus:latest
+        ports:
+        - containerPort: 8080
