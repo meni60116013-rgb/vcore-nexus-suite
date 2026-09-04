@@ -1,0 +1,33 @@
+name: VCORE Control Plane CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-control-plane:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd vcore_control_plane
+          npm install
+
+      - name: Deploy Control Plane
+        run: |
+          cd vcore_control_plane
+          echo "🚀 Desplegando Control Plane en servidor Node.js..."
+          # Aquí integras con tu proveedor:
+          # Heroku -> git push heroku main
+          # Render -> curl -X POST "https://api.render.com/deploy/srv-XXXX" \
+          #   -H "Authorization: Bearer $RENDER_TOKEN"
