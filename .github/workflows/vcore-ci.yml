@@ -1,0 +1,66 @@
+name: VCORE Nexus Suite CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Validate PWA
+        run: |
+          if [ -f vcore_nexus_suite/pwa/index.html ]; then
+            echo "✅ PWA index.html encontrado"
+          else
+            echo "❌ PWA no tiene index.html"
+            exit 1
+          fi
+
+      - name: Compile Panel Admin
+        run: |
+          cd vcore_admin_native || exit 0
+          javac Main.java
+          java Main
+
+      - name: Test Control Plane
+        run: |
+          cd vcore_control_plane || exit 0
+          node server.js &
+          sleep 3
+          pkill -f "node server.js"
+
+      - name: Test Micronúcleos
+        run: |
+          cd vcore_motorcycles || exit 0
+          node -e "require('./motorcycles').startEngine()"
+          cd ../vcore_tubulars || exit 0
+          node -e "require('./tubulars').initTubular()"
+          cd ../vcore_enterprise_auto || exit 0
+          node -e "require('./enterprise_auto').runDiagnostics()"
+
+      - name: Test Security Core
+        run: |
+          cd vcore_security || exit 0
+          python3 security.py
